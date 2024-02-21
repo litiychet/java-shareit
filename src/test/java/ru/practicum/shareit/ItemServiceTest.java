@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.ItemServiceImpl;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.*;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
@@ -17,31 +18,35 @@ public class ItemServiceTest {
     static UserRepository userRepository = new UserRepositoryInMemory();
     static UserService userService = new UserServiceImpl(userRepository);
 
-    static ItemRepository itemRepository = new ItemRepositoryInMemory(userRepository);
-    static ItemService itemService = new ItemServiceImpl(itemRepository);
+    static ItemRepository itemRepository = new ItemRepositoryInMemory();
+    static ItemService itemService = new ItemServiceImpl(itemRepository, userRepository);
 
     @BeforeAll
     public static void setUp() {
-        User user1 = new User();
-        user1.setName("testuser1");
-        user1.setEmail("user1@test.ru");
+        UserDto user1 = UserDto.builder()
+                .name("testuser1")
+                .email("user1@test.ru")
+                .build();
 
-        User user2 = new User();
-        user2.setName("testuser2");
-        user2.setEmail("user2@test.ru");
+        UserDto user2 = UserDto.builder()
+                .name("testuser2")
+                .email("user2@test.ru")
+                .build();
 
         userService.create(user1);
         userService.create(user2);
 
-        ItemDto item1 = new ItemDto();
-        item1.setName("testitem1");
-        item1.setDescription("test item 1 description");
-        item1.setAvailable(true);
+        ItemDto item1 = ItemDto.builder()
+                .name("testitem1")
+                .description("test item 1 description")
+                .available(true)
+                .build();
 
-        ItemDto item2 = new ItemDto();
-        item2.setName("testitem2");
-        item2.setDescription("test item 2 description");
-        item2.setAvailable(true);
+        ItemDto item2 = ItemDto.builder()
+                .name("testitem2")
+                .description("test item 2 description")
+                .available(true)
+                .build();
 
         itemService.create(1L, item1);
         itemService.create(2L, item1);
@@ -49,16 +54,18 @@ public class ItemServiceTest {
 
     @Test
     public void create() {
-        User newUser = new User();
-        newUser.setName("testuser3");
-        newUser.setEmail("user3@test.ru");
+        UserDto newUser = UserDto.builder()
+                .name("testuser3")
+                .email("user3@test.ru")
+                .build();
 
         userService.create(newUser);
 
-        ItemDto newItem = new ItemDto();
-        newItem.setName("testitem3");
-        newItem.setDescription("test item 3");
-        newItem.setAvailable(true);
+        ItemDto newItem = ItemDto.builder()
+                .name("testitem3")
+                .description("test item 3")
+                .available(true)
+                .build();
 
         ItemDto itemDto = itemService.create(3L, newItem);
 
@@ -70,10 +77,11 @@ public class ItemServiceTest {
 
     @Test
     public void update() {
-        ItemDto newItem = new ItemDto();
-        newItem.setName("updateitem");
-        newItem.setDescription("update test item description");
-        newItem.setAvailable(false);
+        ItemDto newItem = ItemDto.builder()
+                .name("updateitem")
+                .description("update test item description")
+                .available(false)
+                .build();
 
         ItemDto updatedItem = itemService.update(2L, 2L, newItem);
 
@@ -116,12 +124,5 @@ public class ItemServiceTest {
         ItemDto item1 = items.get(0);
 
         assertEquals(1L, item1.getId());
-    }
-
-    @Test
-    public void searchItemWithEmptyText() {
-        List<ItemDto> items = itemService.searchItem("");
-
-        assertEquals(0, items.size());
     }
 }

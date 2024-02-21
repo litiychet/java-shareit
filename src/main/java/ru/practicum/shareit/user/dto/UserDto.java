@@ -1,5 +1,6 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.ValidateMarker;
 
@@ -7,7 +8,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class User {
+@Builder
+public class UserDto {
     private Long id;
     @NotEmpty(groups = ValidateMarker.Create.class)
     private String name;

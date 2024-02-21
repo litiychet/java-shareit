@@ -17,10 +17,11 @@ public class ItemValidationTest {
 
     @Test
     void validateEmptyNameInCreate() {
-        ItemDto itemDto = new ItemDto();
-        itemDto.setName("");
-        itemDto.setDescription("test description");
-        itemDto.setAvailable(true);
+        ItemDto itemDto = ItemDto.builder()
+                .name("")
+                .description("test description")
+                .available(true)
+                .build();
 
         Set<ConstraintViolation<ItemDto>> constraintViolations = validator.validate(itemDto, ValidateMarker.Create.class);
         for (ConstraintViolation<ItemDto> c : constraintViolations) {
@@ -30,10 +31,11 @@ public class ItemValidationTest {
 
     @Test
     void validateEmptyDescriptionInCreate() {
-        ItemDto itemDto = new ItemDto();
-        itemDto.setName("testname");
-        itemDto.setDescription("");
-        itemDto.setAvailable(true);
+        ItemDto itemDto = ItemDto.builder()
+                .name("testname")
+                .description("")
+                .available(true)
+                .build();
 
         Set<ConstraintViolation<ItemDto>> constraintViolations = validator.validate(itemDto, ValidateMarker.Create.class);
         for (ConstraintViolation<ItemDto> c : constraintViolations) {
@@ -43,9 +45,10 @@ public class ItemValidationTest {
 
     @Test
     void validateNullAvailableInCreate() {
-        ItemDto itemDto = new ItemDto();
-        itemDto.setName("testname");
-        itemDto.setDescription("test description");
+        ItemDto itemDto = ItemDto.builder()
+                .name("testname")
+                .description("test description")
+                .build();
 
         Set<ConstraintViolation<ItemDto>> constraintViolations = validator.validate(itemDto, ValidateMarker.Create.class);
         for (ConstraintViolation<ItemDto> c : constraintViolations) {

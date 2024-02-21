@@ -3,6 +3,7 @@ package ru.practicum.shareit;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.user.*;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,13 +13,15 @@ public class UserServiceTest {
 
     @BeforeAll
     public static void setUp() {
-        User user1 = new User();
-        user1.setName("testuser1");
-        user1.setEmail("user1@test.ru");
+        UserDto user1 = UserDto.builder()
+                .name("testuser1")
+                .email("user1@test.ru")
+                .build();
 
-        User user2 = new User();
-        user2.setName("testuser2");
-        user2.setEmail("user2@test.ru");
+        UserDto user2 = UserDto.builder()
+                .name("testuser2")
+                .email("user2@test.ru")
+                .build();
 
         userService.create(user1);
         userService.create(user2);
@@ -26,11 +29,12 @@ public class UserServiceTest {
 
     @Test
     public void createUser() {
-        User user3 = new User();
-        user3.setName("testuser3");
-        user3.setEmail("user3@test.ru");
+        UserDto user3 = UserDto.builder()
+                .name("testuser3")
+                .email("user3@test.ru")
+                .build();
 
-        User createdUser = userService.create(user3);
+        UserDto createdUser = userService.create(user3);
 
         assertEquals(3L, createdUser.getId());
         assertEquals("testuser3", createdUser.getName());
@@ -41,11 +45,12 @@ public class UserServiceTest {
 
     @Test
     public void updateUser() {
-        User updateUser = new User();
-        updateUser.setName("updateuser");
-        updateUser.setEmail("update@test.ru");
+        UserDto updateUser = UserDto.builder()
+                .name("updateuser")
+                .email("update@test.ru")
+                .build();
 
-        User newUser = userService.update(2L, updateUser);
+        UserDto newUser = userService.update(2L, updateUser);
 
         assertEquals(2L, newUser.getId());
         assertEquals("updateuser", newUser.getName());
@@ -66,7 +71,7 @@ public class UserServiceTest {
 
     @Test
     public void getUserById() {
-        User user = userService.getById(1L);
+        UserDto user = userService.getById(1L);
 
         assertEquals(user.getId(), 1L);
         assertEquals(user.getName(), "testuser1");

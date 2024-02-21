@@ -3,15 +3,15 @@ package ru.practicum.shareit.user;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.IdFactory;
+import ru.practicum.shareit.exception.DuplicateEmailException;
+import ru.practicum.shareit.user.model.User;
 
-import javax.validation.ValidationException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Repository
-@Qualifier("inMemoryUserRepository")
+@Qualifier("UserRepositoryInMemory")
 public class UserRepositoryInMemory implements UserRepository {
-    private final List<User> users = new ArrayList<>();
+    private final Map<Long, User> users = new HashMap<>();
     private final IdFactory idFactory = new IdFactory();
 
     @Override
@@ -19,13 +19,13 @@ public class UserRepositoryInMemory implements UserRepository {
         validateEmailExists(user);
 
         user.setId(idFactory.getId());
-        users.add(user);
+        users.put(user.getId(), user);
         return user;
     }
 
     @Override
-    public User update(Long id, User user) {
-        return users.stream()
+    public Optional<User> update(Long id, User user) {
+        return users.values().stream()
                 .filter(u -> u.getId().equals(id))
                 .peek(u -> {
                     if (user.getName() != null)
@@ -36,31 +36,28 @@ public class UserRepositoryInMemory implements UserRepository {
                             u.setEmail(user.getEmail());
                         }
                 })
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     @Override
     public void deleteById(Long id) {
-        users.removeIf(u -> u.getId().equals(id));
+        users.remove(id);
     }
 
     @Override
     public List<User> getAll() {
-        return users;
+        return new ArrayList<>(users.values());
     }
 
     @Override
-    public User getById(Long id) {
-        return users.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+    public Optional<User> getById(Long id) {
+        User user = users.get(id);
+        return user != null ? Optional.of(user) : Optional.empty();
     }
 
     private void validateEmailExists(User user) {
-        if (users.stream()
+        if (users.values().stream()
                 .anyMatch(u -> u.getEmail().equals(user.getEmail())))
-            throw new ValidationException("Пользователь с таким email уже существует");
+            throw new DuplicateEmailException("Пользователь с таким email уже существует");
     }
 }

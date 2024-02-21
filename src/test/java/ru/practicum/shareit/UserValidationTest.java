@@ -2,7 +2,7 @@ package ru.practicum.shareit;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -17,9 +17,10 @@ public class UserValidationTest {
 
     @Test
     void validateIncorrectEmail() {
-        User user = new User();
-        user.setName("testuser");
-        user.setEmail("testuserru");
+        User user = User.builder()
+                .name("testuser")
+                .email("testuserru")
+                .build();
 
         Set<ConstraintViolation<User>> constraintViolations = validator.validate(user, ValidateMarker.Create.class, ValidateMarker.Update.class);
         for (ConstraintViolation<User> c : constraintViolations) {
@@ -29,9 +30,10 @@ public class UserValidationTest {
 
     @Test
     void validateEmptyEmailInCreate() {
-        User user = new User();
-        user.setName("testuser");
-        user.setEmail("");
+        User user = User.builder()
+                .name("testuser")
+                .email("")
+                .build();
 
         Set<ConstraintViolation<User>> constraintViolations = validator.validate(user, ValidateMarker.Create.class);
         for (ConstraintViolation<User> c : constraintViolations) {
@@ -41,9 +43,10 @@ public class UserValidationTest {
 
     @Test
     void validateEmptyNameInCreate() {
-        User user = new User();
-        user.setName("");
-        user.setEmail("test@user.ru");
+        User user = User.builder()
+                .name("")
+                .email("test@user.ru")
+                .build();
 
         Set<ConstraintViolation<User>> constraintViolations = validator.validate(user, ValidateMarker.Create.class);
         for (ConstraintViolation<User> c : constraintViolations) {
