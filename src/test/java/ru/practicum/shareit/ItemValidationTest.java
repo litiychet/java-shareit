@@ -2,11 +2,11 @@ package ru.practicum.shareit;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemCreateDto;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,41 +17,41 @@ public class ItemValidationTest {
 
     @Test
     void validateEmptyNameInCreate() {
-        ItemDto itemDto = ItemDto.builder()
+        ItemCreateDto itemCreateDto = ItemCreateDto.builder()
                 .name("")
                 .description("test description")
                 .available(true)
                 .build();
 
-        Set<ConstraintViolation<ItemDto>> constraintViolations = validator.validate(itemDto, ValidateMarker.Create.class);
-        for (ConstraintViolation<ItemDto> c : constraintViolations) {
+        Set<ConstraintViolation<ItemCreateDto>> constraintViolations = validator.validate(itemCreateDto, ValidateMarker.Create.class);
+        for (ConstraintViolation<ItemCreateDto> c : constraintViolations) {
             assertEquals("must not be empty", c.getMessage());
         }
     }
 
     @Test
     void validateEmptyDescriptionInCreate() {
-        ItemDto itemDto = ItemDto.builder()
+        ItemCreateDto itemCreateDto = ItemCreateDto.builder()
                 .name("testname")
                 .description("")
                 .available(true)
                 .build();
 
-        Set<ConstraintViolation<ItemDto>> constraintViolations = validator.validate(itemDto, ValidateMarker.Create.class);
-        for (ConstraintViolation<ItemDto> c : constraintViolations) {
+        Set<ConstraintViolation<ItemCreateDto>> constraintViolations = validator.validate(itemCreateDto, ValidateMarker.Create.class);
+        for (ConstraintViolation<ItemCreateDto> c : constraintViolations) {
             assertEquals("must not be empty", c.getMessage());
         }
     }
 
     @Test
     void validateNullAvailableInCreate() {
-        ItemDto itemDto = ItemDto.builder()
+        ItemCreateDto itemCreateDto = ItemCreateDto.builder()
                 .name("testname")
                 .description("test description")
                 .build();
 
-        Set<ConstraintViolation<ItemDto>> constraintViolations = validator.validate(itemDto, ValidateMarker.Create.class);
-        for (ConstraintViolation<ItemDto> c : constraintViolations) {
+        Set<ConstraintViolation<ItemCreateDto>> constraintViolations = validator.validate(itemCreateDto, ValidateMarker.Create.class);
+        for (ConstraintViolation<ItemCreateDto> c : constraintViolations) {
             assertEquals("must not be null", c.getMessage());
         }
     }

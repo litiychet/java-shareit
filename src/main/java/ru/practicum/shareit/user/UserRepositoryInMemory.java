@@ -1,20 +1,15 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.IdFactory;
 import ru.practicum.shareit.exception.DuplicateEmailException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 
-@Repository
-@Qualifier("UserRepositoryInMemory")
-public class UserRepositoryInMemory implements UserRepository {
+public class UserRepositoryInMemory {
     private final Map<Long, User> users = new HashMap<>();
     private final IdFactory idFactory = new IdFactory();
 
-    @Override
     public User create(User user) {
         validateEmailExists(user);
 
@@ -23,7 +18,6 @@ public class UserRepositoryInMemory implements UserRepository {
         return user;
     }
 
-    @Override
     public Optional<User> update(Long id, User user) {
         return users.values().stream()
                 .filter(u -> u.getId().equals(id))
@@ -39,17 +33,14 @@ public class UserRepositoryInMemory implements UserRepository {
                 .findFirst();
     }
 
-    @Override
     public void deleteById(Long id) {
         users.remove(id);
     }
 
-    @Override
     public List<User> getAll() {
         return new ArrayList<>(users.values());
     }
 
-    @Override
     public Optional<User> getById(Long id) {
         User user = users.get(id);
         return user != null ? Optional.of(user) : Optional.empty();

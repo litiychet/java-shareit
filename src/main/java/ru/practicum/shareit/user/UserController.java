@@ -18,24 +18,20 @@ public class UserController {
 
     @PostMapping
     public UserDto create(@Validated(ValidateMarker.Create.class) @RequestBody UserDto user) {
-        log.info("POST /users");
-        log.info("Create user {}", user);
+        log.info("POST /users - {}", user);
         return userService.create(user);
     }
 
     @PatchMapping("/{userId}")
     public UserDto update(@PathVariable Long userId,
                        @Validated(ValidateMarker.Update.class) @RequestBody UserDto user) {
-        log.info("PATCH /users/{}", userId);
-        log.info("Update user {}", userId);
-        log.info("New user {}", user);
+        log.info("PATCH /users/{} - {}", userId, user);
         return userService.update(userId, user);
     }
 
     @DeleteMapping("/{userId}")
     public void delete(@PathVariable Long userId) {
         log.info("DELETE /users/{}", userId);
-        log.info("Delete user {}", userId);
         userService.delete(userId);
     }
 

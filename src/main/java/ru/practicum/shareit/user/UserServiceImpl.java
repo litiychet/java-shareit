@@ -1,36 +1,42 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.DuplicateEmailException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-
-    @Autowired
-    public UserServiceImpl(@Qualifier("UserRepositoryInMemory") UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public UserDto create(UserDto user) {
         return UserMapper.toUserDto(
-                userRepository.create(UserMapper.toUser(user))
+                userRepository.save(UserMapper.toUser(user))
         );
     }
 
     @Override
     public UserDto update(Long id, UserDto user) {
         validateExistsUser(id);
-        return UserMapper.toUserDto(
-                userRepository.update(id, UserMapper.toUser(user)).get()
-        );
+
+        User newUser = userRepository.findById(id).get();
+
+        if (user.getName() != null)
+            newUser.setName(user.getName());
+        if (user.getEmail() != null)
+            if (!user.getEmail().equals(newUser.getEmail())) {
+                validateExistsEmail(user.getEmail());
+                newUser.setEmail(user.getEmail());
+            }
+
+        return UserMapper.toUserDto(userRepository.save(newUser));
     }
 
     @Override
@@ -41,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll() {
-        return userRepository.getAll().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
@@ -50,12 +56,17 @@ public class UserServiceImpl implements UserService {
     public UserDto getById(Long id) {
         validateExistsUser(id);
         return UserMapper.toUserDto(
-                userRepository.getById(id).get()
+                userRepository.findById(id).get()
         );
     }
 
     private void validateExistsUser(Long id) {
-        if (userRepository.getById(id).isEmpty())
+        if (userRepository.findById(id).isEmpty())
             throw new NotFoundException("Пользователя с ID " + id + " не найдено");
+    }
+
+    private void validateExistsEmail(String email) {
+        if (userRepository.findByEmail(email).isPresent())
+            throw new DuplicateEmailException("Пользователь с таким email уже существует");
     }
 }
