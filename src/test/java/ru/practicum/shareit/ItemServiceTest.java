@@ -404,7 +404,7 @@ public class ItemServiceTest {
                 .start(pastStartTime)
                 .end(pastEndTime)
                 .booker(user1)
-                .item(item2)
+                .item(item1)
                 .status(BookingStatus.APPROVED)
                 .build();
 
@@ -413,7 +413,7 @@ public class ItemServiceTest {
                 .start(futureStartTime)
                 .end(futureEndTime)
                 .booker(user1)
-                .item(item2)
+                .item(item1)
                 .status(BookingStatus.APPROVED)
                 .build();
 
@@ -426,12 +426,10 @@ public class ItemServiceTest {
                 .build();
 
         given(itemRepository.findAllByOwnerId(user1.getId())).willReturn(List.of(item1, item3));
-        given(commentRepository.findAllByItemId(item1.getId())).willReturn(List.of(comment1, comment2));
+        given(commentRepository.findByItemsIdIn(List.of(item1.getId(), item3.getId()))).willReturn(List.of(comment1, comment2));
         given(userRepository.findById(user1.getId())).willReturn(Optional.of(user1));
-        given(bookingRepository.findLastBookingByItemId(item1.getId())).willReturn(List.of(lastBooking));
-        given(bookingRepository.findNextBookingByItemId(item1.getId())).willReturn(List.of(nextBooking));
-        given(bookingRepository.findLastBookingByItemId(item3.getId())).willReturn(List.of());
-        given(bookingRepository.findNextBookingByItemId(item3.getId())).willReturn(List.of());
+        given(bookingRepository.findLastBookingByItemIn(List.of(item1.getId(), item3.getId()))).willReturn(List.of(lastBooking));
+        given(bookingRepository.findNextBookingByItemIn(List.of(item1.getId(), item3.getId()))).willReturn(List.of(nextBooking));
 
         List<ItemResponseDto> responseDtos = itemService.getUserItems(user1.getId());
 
@@ -449,7 +447,7 @@ public class ItemServiceTest {
                 () -> assertEquals(3L, responseDtos.get(1).getId()),
                 () -> assertEquals("item 3", responseDtos.get(1).getName()),
                 () -> assertEquals("item 3 description", responseDtos.get(1).getDescription()),
-                () -> assertEquals(0, responseDtos.get(1).getComments().size()),
+                () -> assertNull(responseDtos.get(1).getComments()),
                 () -> assertNull(responseDtos.get(1).getLastBooking()),
                 () -> assertNull(responseDtos.get(1).getNextBooking())
         );
