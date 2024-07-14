@@ -7,7 +7,7 @@ import ru.practicum.shareit.item.model.Item;
 
 @UtilityClass
 public class ItemMapper {
-    public static ItemCreateDto toItemDto(Item item) {
+    public ItemCreateDto toItemDto(Item item) {
         return ItemCreateDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -16,7 +16,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemResponseDto toItemResponseDto(Item item) {
+    public ItemResponseDto toItemResponseDto(Item item) {
         return ItemResponseDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -27,7 +27,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item toItem(ItemCreateDto itemCreateDto) {
+    public Item toItem(ItemCreateDto itemCreateDto) {
         return Item.builder()
                 .name(itemCreateDto.getName())
                 .description(itemCreateDto.getDescription())

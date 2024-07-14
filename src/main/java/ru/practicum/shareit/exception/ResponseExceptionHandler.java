@@ -1,5 +1,7 @@
 package ru.practicum.shareit.exception;
 
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,23 +13,27 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice(annotations = RestController.class)
 public class ResponseExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     protected Map<String, String> notFoundExceptionHandler(NotFoundException e) {
+        log.error("Status 404 Not Found {}\n{}", e.getMessage(), e.getStackTrace());
         return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
     }
 
     @ExceptionHandler(NotOwnerException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     protected Map<String, String> notOwnerExceptionHandler(NotOwnerException e) {
+        log.error("Status 403 Forbidden {}\n{}", e.getMessage(), e.getStackTrace());
         return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
     }
 
     @ExceptionHandler(DuplicateEmailException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     protected Map<String, String> duplicateEmailExceptionHandler(DuplicateEmailException e) {
+        log.error("Status 409 Conflict {}\n{}", e.getMessage(), e.getStackTrace());
         return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
     }
 
@@ -42,31 +48,9 @@ public class ResponseExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
+        log.error("Status 400 Bad Request Validation Exception {}", errors);
+
         return errors;
-    }
-
-    @ExceptionHandler(MissingRequestHeaderException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected Map<String, String> requestHeaderExceptionHandler(MissingRequestHeaderException e) {
-        return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
-    }
-
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected Map<String, String> requestHeaderExceptionHandler(MissingServletRequestParameterException e) {
-        return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
-    }
-
-    @ExceptionHandler(ItemUnvailableException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected Map<String, String> itemUnvailableExceptionHandler(ItemUnvailableException e) {
-        return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
-    }
-
-    @ExceptionHandler(DateBookingException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected Map<String, String> dateBookingExceptionHandler(DateBookingException e) {
-        return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -75,21 +59,25 @@ public class ResponseExceptionHandler {
         return Map.of("exception", e.getClass().getName(), "error", "Unknown state: " + e.getValue().toString());
     }
 
-    @ExceptionHandler(AlreadyApprovedException.class)
+    @ExceptionHandler({
+            MissingRequestHeaderException.class,
+            MissingServletRequestParameterException.class,
+            ItemUnvailableException.class,
+            DateBookingException.class,
+            AlreadyApprovedException.class,
+            NotBookerException.class,
+            ConstraintViolationException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected Map<String, String> alreadyApprovedExceptionHandler(AlreadyApprovedException e) {
-        return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
-    }
-
-    @ExceptionHandler(NotBookerException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected Map<String, String> notBookerExceptionHandler(NotBookerException e) {
+    protected Map<String, String> notBookerExceptionHandler(Exception e) {
+        log.error("Status 400 Bad Request {}\n{}", e.getMessage(), e.getStackTrace());
         return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     protected Map<String, String> runtimeExceptionHandler(RuntimeException e) {
+        log.error("Status 500 Internal Server Error {}\n{}", e.getMessage(), e.getStackTrace());
         return Map.of("exception", e.getClass().toString(), "error", e.getMessage());
     }
 }

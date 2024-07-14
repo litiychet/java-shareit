@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.HeaderName;
 import ru.practicum.shareit.ValidateMarker;
 import ru.practicum.shareit.item.dto.CommentCreateDto;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
@@ -21,30 +22,30 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemCreateDto create(@RequestHeader("X-Sharer-User-Id") final long userId,
+    public ItemCreateDto create(@RequestHeader(HeaderName.USER_ID) final long userId,
                                 @Validated(ValidateMarker.Create.class) @RequestBody ItemCreateDto item) {
-        log.info("POST /items {} X-Sharer-User-Id: {}", item, userId);
+        log.info("POST /items {} {}: {}", item, HeaderName.USER_ID, userId);
         return itemService.create(userId, item);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemCreateDto update(@RequestHeader("X-Sharer-User-Id") final long userId,
+    public ItemCreateDto update(@RequestHeader(HeaderName.USER_ID) final long userId,
                                 @PathVariable Long itemId,
                                 @Validated(ValidateMarker.Update.class) @RequestBody ItemCreateDto item) {
-        log.info("PATCH /items/{} {} X-Sharer-User-Id: {}", itemId, item, userId);
+        log.info("PATCH /items/{} {} {}: {}", itemId, item, HeaderName.USER_ID, userId);
         return itemService.update(userId, itemId, item);
     }
 
     @GetMapping("/{itemId}")
-    public ItemResponseDto get(@RequestHeader("X-Sharer-User-Id") final long userId,
+    public ItemResponseDto get(@RequestHeader(HeaderName.USER_ID) final long userId,
                                @PathVariable Long itemId) {
-        log.info("GET /items/{} X-Sharer-User-Id: {}", itemId, userId);
+        log.info("GET /items/{} {}: {}", itemId, HeaderName.USER_ID, userId);
         return itemService.get(itemId, userId);
     }
 
     @GetMapping
-    public List<ItemResponseDto> getUserItems(@RequestHeader("X-Sharer-User-Id") final long userId) {
-        log.info("GET /items X-Sharer-User-Id: {}", userId);
+    public List<ItemResponseDto> getUserItems(@RequestHeader(HeaderName.USER_ID) final long userId) {
+        log.info("GET /items {}: {}", HeaderName.USER_ID, userId);
         return itemService.getUserItems(userId);
     }
 
@@ -57,10 +58,10 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentResponseDto createCommentToItem(@RequestHeader("X-Sharer-User-Id") final long userId,
+    public CommentResponseDto createCommentToItem(@RequestHeader(HeaderName.USER_ID) final long userId,
                                                   @PathVariable Long itemId,
                                                   @Validated(ValidateMarker.Create.class) @RequestBody CommentCreateDto comment) {
-        log.info("POST /items/{}/comment {} X-Sharer-User-Id: {}", itemId, comment, userId);
+        log.info("POST /items/{}/comment {} {}: {}", itemId, comment, HeaderName.USER_ID, userId);
         return itemService.addComment(userId, itemId, comment);
     }
 }

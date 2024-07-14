@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,5 +15,6 @@ import jakarta.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class CommentCreateDto {
     @NotEmpty(groups = ValidateMarker.Create.class)
+    @Size(max = 256)
     private String text;
 }

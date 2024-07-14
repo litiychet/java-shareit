@@ -30,7 +30,7 @@ import jakarta.persistence.JoinColumn;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    protected Long id;
 
     private String name;
 

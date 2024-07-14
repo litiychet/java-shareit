@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.ValidateMarker;
@@ -13,9 +14,11 @@ public class ItemCreateDto {
     private Long id;
 
     @NotEmpty(groups = ValidateMarker.Create.class)
+    @Size(max = 64)
     private String name;
 
     @NotEmpty(groups = ValidateMarker.Create.class)
+    @Size(max = 256)
     private String description;
 
     @NotNull(groups = ValidateMarker.Create.class)
