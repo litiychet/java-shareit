@@ -15,6 +15,6 @@ import jakarta.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class CommentCreateDto {
     @NotEmpty(groups = ValidateMarker.Create.class)
-    @Size(max = 256)
+    @Size(max = 256, groups = ValidateMarker.Create.class)
     private String text;
 }

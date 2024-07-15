@@ -111,18 +111,14 @@ public class ItemServiceImpl implements ItemService {
         return userItems.stream()
                 .map(ItemMapper::toItemResponseDto)
                 .peek(i -> {
-                    List<Comment> comments = itemComments.get(i) == null ? null : itemComments.get(i);
-                    List<Booking> lastBooking = lastBookingForItems.get(i) == null ? null : lastBookingForItems.get(i);
-                    List<Booking> nextBooking = nextBookingForItems.get(i) == null ? null : nextBookingForItems.get(i);
+                    List<Comment> comments = itemComments.getOrDefault(i, List.of());
+                    List<Booking> lastBooking = lastBookingForItems.get(i);
+                    List<Booking> nextBooking = nextBookingForItems.get(i);
 
-                    if (comments != null) {
-                        i.setComments(comments.stream()
-                                .map(CommentMapper::toCommentResponseDto)
-                                .collect(toList())
-                        );
-                    } else {
-                        i.setComments(null);
-                    }
+                    i.setComments(comments.stream()
+                            .map(CommentMapper::toCommentResponseDto)
+                            .collect(toList())
+                    );
 
                     if (lastBooking != null) {
                         i.setLastBooking(BookingMapper.toBookingForItemDto(lastBooking.getFirst()));
@@ -151,8 +147,7 @@ public class ItemServiceImpl implements ItemService {
         validateExistsUser(userId);
         validateExistsItem(itemId);
 
-        if (bookingRepository.findPastBooking(userId).isEmpty()
-                || bookingRepository.findCurrentBooking(userId).isEmpty())
+        if (!bookingRepository.existsCurrentAndPastBookingByUserId(userId))
             throw new NotBookerException("Пользователь " + userId + " не брал вещь " + itemId + " в аренду");
 
         Comment createdComment = CommentMapper.toComment(commentCreateDto);

@@ -14,11 +14,11 @@ public class ItemCreateDto {
     private Long id;
 
     @NotEmpty(groups = ValidateMarker.Create.class)
-    @Size(max = 64)
+    @Size(max = 64, groups = {ValidateMarker.Create.class, ValidateMarker.Update.class})
     private String name;
 
     @NotEmpty(groups = ValidateMarker.Create.class)
-    @Size(max = 256)
+    @Size(max = 256, groups = {ValidateMarker.Create.class, ValidateMarker.Update.class})
     private String description;
 
     @NotNull(groups = ValidateMarker.Create.class)

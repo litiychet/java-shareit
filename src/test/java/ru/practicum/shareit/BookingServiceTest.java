@@ -218,11 +218,6 @@ public class BookingServiceTest {
 
         assertThrowsExactly(DateBookingException.class, () -> bookingService.create(user3.getId(), createBookingDto));
 
-        createBookingDto.setStart(LocalDateTime.now().minus(1, ChronoUnit.DAYS));
-        createBookingDto.setEnd(LocalDateTime.now().plus(1, ChronoUnit.DAYS));
-
-        assertThrowsExactly(DateBookingException.class, () -> bookingService.create(user3.getId(), createBookingDto));
-
         createBookingDto.setStart(LocalDateTime.now().plus(2, ChronoUnit.DAYS));
         createBookingDto.setEnd(LocalDateTime.now().plus(1, ChronoUnit.DAYS));
 

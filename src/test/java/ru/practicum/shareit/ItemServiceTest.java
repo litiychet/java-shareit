@@ -447,7 +447,7 @@ public class ItemServiceTest {
                 () -> assertEquals(3L, responseDtos.get(1).getId()),
                 () -> assertEquals("item 3", responseDtos.get(1).getName()),
                 () -> assertEquals("item 3 description", responseDtos.get(1).getDescription()),
-                () -> assertNull(responseDtos.get(1).getComments()),
+                () -> assertEquals(List.of(), responseDtos.get(1).getComments()),
                 () -> assertNull(responseDtos.get(1).getLastBooking()),
                 () -> assertNull(responseDtos.get(1).getNextBooking())
         );
@@ -495,8 +495,7 @@ public class ItemServiceTest {
         given(userRepository.findById(user2.getId())).willReturn(Optional.of(user2));
         given(itemRepository.findById(item1.getId())).willReturn(Optional.of(item2));
         given(commentRepository.save(CommentMapper.toComment(createComment1))).willReturn(comment1);
-        given(bookingRepository.findPastBooking(user2.getId())).willReturn(List.of(pastBooking));
-        given(bookingRepository.findCurrentBooking(user2.getId())).willReturn(List.of(currentBooking));
+        given(bookingRepository.existsCurrentAndPastBookingByUserId(user2.getId())).willReturn(true);
 
         CommentResponseDto responseDto = itemService.addComment(user2.getId(), item1.getId(), createComment1);
 
@@ -545,7 +544,7 @@ public class ItemServiceTest {
 
         given(itemRepository.findById(item1.getId())).willReturn(Optional.of(item1));
         given(userRepository.findById(user2.getId())).willReturn(Optional.of(user2));
-        given(bookingRepository.findPastBooking(user2.getId())).willReturn(List.of());
+        given(bookingRepository.existsCurrentAndPastBookingByUserId(user2.getId())).willReturn(false);
 
         assertThrowsExactly(NotBookerException.class,
                 () -> itemService.addComment(user2.getId(), item1.getId(), createComment1)

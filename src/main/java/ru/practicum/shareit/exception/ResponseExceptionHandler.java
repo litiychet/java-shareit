@@ -74,9 +74,9 @@ public class ResponseExceptionHandler {
         return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(Throwable.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    protected Map<String, String> runtimeExceptionHandler(RuntimeException e) {
+    protected Map<String, String> runtimeExceptionHandler(Throwable e) {
         log.error("Status 500 Internal Server Error {}\n{}", e.getMessage(), e.getStackTrace());
         return Map.of("exception", e.getClass().toString(), "error", e.getMessage());
     }

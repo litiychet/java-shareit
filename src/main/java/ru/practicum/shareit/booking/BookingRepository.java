@@ -111,4 +111,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and CURRENT_TIMESTAMP < b.start " +
             "order by b.start")
     List<Booking> findNextBookingByItemIn(List<Long> items);
+
+    @Query("select case when count(b) > 0 then true else false end  " +
+            "from Booking b " +
+            "where b.booker.id = ?1 " +
+            "and (CURRENT_TIMESTAMP between b.start and b.end " +
+            "or CURRENT_TIMESTAMP > b.end)")
+    Boolean existsCurrentAndPastBookingByUserId(Long ownerId);
 }

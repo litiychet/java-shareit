@@ -10,7 +10,6 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,10 +26,7 @@ public class BookingServiceImpl implements BookingService {
         validateExistsUser(userId);
         validateExistsItem(bookingCreateDto.getItemId());
 
-        if (bookingCreateDto.getEnd().isBefore(LocalDateTime.now())
-                || bookingCreateDto.getStart().isBefore(LocalDateTime.now())
-                || bookingCreateDto.getEnd().isBefore(bookingCreateDto.getStart())
-                || bookingCreateDto.getEnd().isEqual(bookingCreateDto.getStart()))
+        if (!bookingCreateDto.getEnd().isAfter(bookingCreateDto.getStart()))
             throw new DateBookingException("Некорректные даты бронированя");
 
         Item item = itemRepository.findById(bookingCreateDto.getItemId()).get();
