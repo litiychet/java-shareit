@@ -24,15 +24,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(Long id, UserDto user) {
-        validateExistsUser(id);
-
-        User newUser = userRepository.findById(id).get();
+        User newUser = userRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Пользователя с ID " + id + " не найдено")
+        );
 
         if (user.getName() != null)
             newUser.setName(user.getName());
         if (user.getEmail() != null)
             if (!user.getEmail().equals(newUser.getEmail())) {
-                validateExistsEmail(user.getEmail());
+                if (userRepository.existsEmail(user.getEmail()))
+                    throw new DuplicateEmailException("Пользователь с таким email уже существует");
                 newUser.setEmail(user.getEmail());
             }
 
@@ -41,7 +42,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long id) {
-        validateExistsUser(id);
+        userRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Пользователя с ID " + id + " не найдено")
+        );
+
         userRepository.deleteById(id);
     }
 
@@ -54,19 +58,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(Long id) {
-        validateExistsUser(id);
-        return UserMapper.toUserDto(
-                userRepository.findById(id).get()
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Пользователя с ID " + id + " не найдено")
         );
-    }
 
-    private void validateExistsUser(Long id) {
-        if (userRepository.findById(id).isEmpty())
-            throw new NotFoundException("Пользователя с ID " + id + " не найдено");
-    }
-
-    private void validateExistsEmail(String email) {
-        if (userRepository.findByEmail(email).isPresent())
-            throw new DuplicateEmailException("Пользователь с таким email уже существует");
+        return UserMapper.toUserDto(user);
     }
 }

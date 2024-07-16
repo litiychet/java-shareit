@@ -104,7 +104,9 @@ public class UserServiceTest {
     @Test
     public void updateUserWithExistsEmail() {
         given(userRepository.findById(user1.getId())).willReturn(Optional.of(user1));
-        given(userRepository.findByEmail(user2.getEmail())).willReturn(Optional.of(user2));
+        given(userRepository.existsEmail(user2.getEmail())).willThrow(
+                new DuplicateEmailException("Пользователь с таким email уже существует")
+        );
 
         UserDto createUser = UserDto.builder()
                 .id(1L)

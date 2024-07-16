@@ -190,9 +190,6 @@ public class ItemServiceTest {
 
     @Test
     public void updateWithNotExistsUser() {
-        given(itemRepository.findById(item1.getId())).willReturn(Optional.of(item1));
-        given(userRepository.findById(3L)).willReturn(Optional.empty());
-
         assertThrowsExactly(NotFoundException.class,
                 () -> itemService.update(3L,
                         item1.getId(),
@@ -202,9 +199,6 @@ public class ItemServiceTest {
 
     @Test
     public void updateWithNotExistsItem() {
-        given(itemRepository.findById(3L)).willReturn(Optional.empty());
-
-        item1.setId(3L);
         assertThrowsExactly(NotFoundException.class,
                 () -> itemService.update(user1.getId(), 3L, ItemMapper.toItemDto(item1))
         );
@@ -263,16 +257,11 @@ public class ItemServiceTest {
 
     @Test
     public void getItemWithNotExistsItem() {
-        given(itemRepository.findById(3L)).willReturn(Optional.empty());
-
         assertThrowsExactly(NotFoundException.class, () -> itemService.get(3L, user1.getId()));
     }
 
     @Test
     public void getItemWithNotExistsUser() {
-        given(itemRepository.findById(item2.getId())).willReturn(Optional.of(item2));
-        given(userRepository.findById(3L)).willReturn(Optional.empty());
-
         assertThrowsExactly(NotFoundException.class, () -> itemService.get(item2.getId(), 3L));
     }
 
