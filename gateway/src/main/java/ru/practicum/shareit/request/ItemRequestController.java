@@ -1,8 +1,11 @@
 package ru.practicum.shareit.request;
 
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,13 +14,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.request.dto.ItemRequestCreateDto;
 import ru.practicum.shareit.HeaderName;
 import ru.practicum.shareit.ValidateMarker;
 
 @Slf4j
-@RestController
+@Controller
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
 public class ItemRequestController {
@@ -36,9 +38,10 @@ public class ItemRequestController {
         return itemRequestClient.getUserRequests(userId);
     }
 
+    @Validated
     @GetMapping("/all")
-    public ResponseEntity<Object> getAllRequests(@RequestParam(defaultValue = "0") long from,
-                                               @RequestParam(defaultValue = "3") long size) {
+    public ResponseEntity<Object> getAllRequests(@RequestParam @PositiveOrZero long from,
+                                               @RequestParam @Positive long size) {
         log.info("GET /requests/all?from={}&size={}", from, size);
         return itemRequestClient.getRequests(from, size);
     }

@@ -51,7 +51,7 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemCreateDto> searchByName(@RequestParam String text) {
-        if (text.isEmpty())
+        if (text.isBlank())
             return Collections.emptyList();
         log.info("GET /items/search?text={}", text);
         return itemService.searchItem(text);

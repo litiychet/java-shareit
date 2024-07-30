@@ -1,5 +1,6 @@
 package ru.practicum.shareit.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -34,6 +35,16 @@ public class ResponseExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     protected Map<String, String> enumConversionExceptionHandler(MethodArgumentTypeMismatchException e) {
         return Map.of("exception", e.getClass().getName(), "error", "Unknown state: " + e.getValue().toString());
+    }
+
+    @ExceptionHandler({
+            DateBookingException.class,
+            ConstraintViolationException.class
+    })
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected Map<String, String> notBookerExceptionHandler(Exception e) {
+        log.error("Status 400 Bad Request {}\n{}", e.getMessage(), e.getStackTrace());
+        return Map.of("exception", e.getClass().getName(), "error", e.getMessage());
     }
 
     @ExceptionHandler(Throwable.class)

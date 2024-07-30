@@ -12,6 +12,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.client.BaseClient;
+import ru.practicum.shareit.exception.DateBookingException;
 
 @Service
 public class BookingClient extends BaseClient {
@@ -28,6 +29,8 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> create(final long userId, BookingCreateDto bookingCreateDto) {
+        if (!bookingCreateDto.getEnd().isAfter(bookingCreateDto.getStart()))
+            throw new DateBookingException("Некорректные даты бронированя");
         return post("", userId, bookingCreateDto);
     }
 
